@@ -9,6 +9,7 @@ from typing import Any
 from pydantic import BaseModel
 
 from triagent.audit import AuditEntry
+from triagent.benchmark.groundtruth import GroundTruth
 from triagent.config import Config
 from triagent.models import Finding, LlmCall
 
@@ -19,6 +20,7 @@ MODELS: dict[str, type[BaseModel]] = {
     "llm-call.schema.json": LlmCall,
     "audit-entry.schema.json": AuditEntry,
     "config.schema.json": Config,
+    "ground-truth.schema.json": GroundTruth,
 }
 
 

@@ -1,0 +1,67 @@
+# Isolated runtime for the INTENTIONALLY VULNERABLE benchmark app (resolution R-08, invariant I-08).
+# Started only by `triagent benchmark poc` / `selftest`, which set the BENCH_* variables.
+#
+# - One internal network (internal: true): no gateway, so nothing can leave it, and no ports are published.
+# - Every container: non-root, read-only root filesystem, all capabilities dropped,
+#   no-new-privileges, CPU, memory and PID limits, read-only mounts.
+# - The app source and the PoC scripts are mounted read-only; dependencies are baked into the image.
+
+x-hardened: &hardened
+  image: ${BENCH_IMAGE:?set by triagent benchmark}
+  user: "1000:1000"
+  read_only: true
+  cap_drop: [ALL]
+  security_opt: ["no-new-privileges:true"]
+  mem_limit: 256m
+  pids_limit: 128
+  cpus: 0.5
+  init: true
+  tmpfs: ["/tmp:size=16m,mode=1777"]
+  labels:
+    triagent.benchmark: "1"
+  networks: [bench]
+
+networks:
+  bench:
+    internal: true
+    labels:
+      triagent.benchmark: "1"
+
+services:
+  app:
+    <<: *hardened
+    working_dir: /app
+    command: ["node", "server.js"]
+    environment:
+      BENCHMARK_SANDBOX: "1"
+      HOST: 0.0.0.0
+      PORT: "3000"
+    volumes:
+      - ${BENCH_APP_DIR:?set by triagent benchmark}:/app:ro
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:3000/health"]
+      interval: 1s
+      timeout: 2s
+      retries: 30
+
+  internal:
+    <<: *hardened
+    working_dir: /poc
+    command: ["node", "/poc/internal-service.js"]
+    volumes:
+      - ${BENCH_POC_DIR:?set by triagent benchmark}:/poc:ro
+
+  poc:
+    <<: *hardened
+    working_dir: /poc
+    profiles: ["poc"]
+    environment:
+      TARGET_URL: http://app:3000
+    volumes:
+      - ${BENCH_POC_DIR:?set by triagent benchmark}:/poc:ro
+      - ${BENCH_APP_DIR:?set by triagent benchmark}:/app:ro
+    depends_on:
+      app:
+        condition: service_healthy
+      internal:
+        condition: service_started

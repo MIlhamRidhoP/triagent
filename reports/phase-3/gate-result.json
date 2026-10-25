@@ -1,0 +1,18 @@
+{
+  "phase": 3,
+  "passed": true,
+  "timestamp_utc": "2026-10-25T22:35:58Z",
+  "git_head": "deeabde",
+  "checks": [
+    {
+      "name": "hygiene",
+      "exit_code": 0,
+      "log": "reports/phase-3/gate-hygiene.log"
+    },
+    {
+      "name": "phase",
+      "exit_code": 0,
+      "log": "reports/phase-3/gate-phase.log"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "name": "triagent-benchmark-deps",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Dependencies of the INTENTIONALLY VULNERABLE benchmark app, installed once into the benchmark image.",
+  "dependencies": {
+    "express": "4.22.3"
+  }
+}

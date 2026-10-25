@@ -1,0 +1,244 @@
+{
+  "$defs": {
+    "Category": {
+      "enum": [
+        "xss",
+        "sqli",
+        "path-traversal",
+        "command-injection",
+        "ssrf",
+        "open-redirect",
+        "hardcoded-secret",
+        "authz",
+        "code-injection",
+        "prototype-pollution",
+        "mass-assignment"
+      ],
+      "title": "Category",
+      "type": "string"
+    },
+    "Framing": {
+      "enum": [
+        "none",
+        "safe_claim",
+        "alarm_claim"
+      ],
+      "title": "Framing",
+      "type": "string"
+    },
+    "GtItem": {
+      "additionalProperties": false,
+      "properties": {
+        "anchor": {
+          "pattern": "^[^'\\\"`\\\\]{3,80}$",
+          "title": "Anchor",
+          "type": "string"
+        },
+        "category": {
+          "$ref": "#/$defs/Category"
+        },
+        "comment_framing": {
+          "$ref": "#/$defs/Framing",
+          "default": "none"
+        },
+        "cwe": {
+          "items": {
+            "pattern": "^CWE-[1-9][0-9]*$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Cwe",
+          "type": "array"
+        },
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "file": {
+          "pattern": "^(?:[A-Za-z0-9_][A-Za-z0-9_-]*/)*[A-Za-z0-9_][A-Za-z0-9_-]*\\.js$",
+          "title": "File",
+          "type": "string"
+        },
+        "framing_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Framing Text"
+        },
+        "id": {
+          "pattern": "^BM-[0-9]{3}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "$ref": "#/$defs/Label"
+        },
+        "notes": {
+          "minLength": 1,
+          "title": "Notes",
+          "type": "string"
+        },
+        "poc": {
+          "pattern": "^poc/BM-[0-9]{3}\\.js$",
+          "title": "Poc",
+          "type": "string"
+        },
+        "start_line": {
+          "minimum": 1,
+          "title": "Start Line",
+          "type": "integer"
+        },
+        "title": {
+          "minLength": 3,
+          "title": "Title",
+          "type": "string"
+        },
+        "trap_kind": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TrapKind"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "cwe",
+        "category",
+        "label",
+        "file",
+        "start_line",
+        "end_line",
+        "anchor",
+        "poc",
+        "notes"
+      ],
+      "title": "GtItem",
+      "type": "object"
+    },
+    "Label": {
+      "enum": [
+        "tp",
+        "fp-trap"
+      ],
+      "title": "Label",
+      "type": "string"
+    },
+    "TrapKind": {
+      "enum": [
+        "sanitization",
+        "parameterized",
+        "allowlist",
+        "authz-check",
+        "placeholder",
+        "safe-api"
+      ],
+      "title": "TrapKind",
+      "type": "string"
+    },
+    "Variant": {
+      "additionalProperties": false,
+      "description": "Provenance of a mutated copy of the benchmark.",
+      "properties": {
+        "base_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Base Sha256",
+          "type": "string"
+        },
+        "ops": {
+          "items": {
+            "enum": [
+              "rename",
+              "strip-comments",
+              "style"
+            ],
+            "type": "string"
+          },
+          "title": "Ops",
+          "type": "array"
+        },
+        "seed": {
+          "title": "Seed",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "base_sha256",
+        "seed",
+        "ops"
+      ],
+      "title": "Variant",
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "app": {
+      "minLength": 1,
+      "title": "App",
+      "type": "string"
+    },
+    "corpus_date": {
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+      "title": "Corpus Date",
+      "type": "string"
+    },
+    "items": {
+      "items": {
+        "$ref": "#/$defs/GtItem"
+      },
+      "minItems": 1,
+      "title": "Items",
+      "type": "array"
+    },
+    "label_source": {
+      "const": "poc",
+      "title": "Label Source",
+      "type": "string"
+    },
+    "labeled_by": {
+      "minLength": 1,
+      "title": "Labeled By",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "variant": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Variant"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "schema_version",
+    "app",
+    "corpus_date",
+    "label_source",
+    "labeled_by",
+    "items"
+  ],
+  "title": "GroundTruth",
+  "type": "object"
+}

@@ -11,7 +11,7 @@ Aturan umum: satu fase hanya selesai bila `scripts/gate.sh N` lulus dan review t
 | 0 | Fondasi, guard, literatur, validasi SPEC | Sonnet | - | 3 sampai 5% | [x] |
 | 1 | Kerangka, skema, CLI, audit log | Sonnet | - | 4 sampai 8% | [x] |
 | 2 | Ingest SARIF, adapter Semgrep, dedup | Sonnet | - | 4 sampai 8% | [x] |
-| 3 | Benchmark dan harness evaluasi | **Opus** | **C1** | 8 sampai 14% | [ ] |
+| 3 | Benchmark dan harness evaluasi | Sonnet (instruksi pemilik; rencana semula Opus) | **C1** | 8 sampai 14% | [x] |
 | 4 | Triase LLM multi-model, redaksi | Sonnet | - | 8 sampai 14% | [ ] |
 | 5 | Slicing konteks kode | Sonnet | - | 6 sampai 12% | [ ] |
 | 6 | GitHub Action dan komentar PR | Sonnet | **C2** | 6 sampai 10% | [ ] |
@@ -115,11 +115,12 @@ Diisi orkestrator dari `scripts/usage.sh` di awal dan akhir tiap fase.
 | 0 | 2026-10-26 | belum tersedia | belum tersedia | belum diketahui | Guard baru dipasang di fase ini; status line aktif setelah sesi dimulai ulang, jadi `scripts/usage.sh` belum punya data. Reviewer Sonnet (instruksi pemilik), architect Opus. Siklus perbaikan 1 tanpa architect (temuan kecil). A-07, A-08, A-09, A-11 belum diuji. |
 | 1 | 2026-10-26 | belum tersedia | belum tersedia | belum diketahui | Gerbang lulus, 107 tes, review siklus 2 PASS. Minor tersisa: R-07 (`__dict__`/copy.copy lolos model, tertangkap transition) dan R-08 (verify di direktori baca-saja). Python 3.12 dan CI GitHub belum terbukti. |
 | 2 | 2026-10-26 | belum tersedia | belum tersedia | belum diketahui | Gerbang lulus, 209 tes, review siklus 1 PASS tanpa kritis/mayor. Fixture SARIF nyata (Semgrep 1.181.1 via Docker). Minor ditunda: validasi `location.file` (wajib di fase 5), `suppressions`/`baselineState` tidak dibaca, kolom tidak dipakai dedup, tanpa batas ukuran SARIF, hash di dev-report salah sebut berkas. |
+| 3 | 2026-10-26 | belum tersedia | belum tersedia | belum diketahui | Gerbang lulus (63 PASS), 258 tes, review Opus siklus 2 PASS. Minor tersisa: label bocor di benchmark/app/README.md (BM-002), strip-prefix tanpa batas segmen, BM-009 dipersempit ke satu baris. Developer Sonnet, bukan Opus, mengikuti instruksi 'Opus hanya untuk architect'. |
 | | | | | | |
 
 ## Status berjalan
 
-Terakhir diperbarui: 2026-10-26, fase 2 lulus.
-Fase aktif: 3 (belum dimulai)
-Langkah terakhir yang lulus: fase 2 (gate + review siklus 1)
+Terakhir diperbarui: 2026-10-26, fase 3 lulus, berhenti di C1.
+Fase aktif: menunggu 'lanjut' pemilik di C1 (fase 4 belum dimulai)
+Langkah terakhir yang lulus: fase 3 (gate + review siklus 2)
 Hal yang sedang dikerjakan saat berhenti: -

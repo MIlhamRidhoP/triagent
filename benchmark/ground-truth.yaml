@@ -1,0 +1,331 @@
+# Ground truth of the fieldnotes-bench application (schema: schemas/ground-truth.schema.json).
+# Every label comes from a PoC run in Docker (label_source: poc), not from an LLM: a tp item's PoC
+# must succeed and a fp-trap item's PoC must fail. Lines refer to the original (unmutated) sources.
+schema_version: 1
+app: fieldnotes-bench
+corpus_date: "2026-10-26"
+label_source: poc
+labeled_by: "triagent developer agent, confirmed by PoC runs"
+items:
+  - id: BM-001
+    title: Reflected XSS in the search page
+    cwe: [CWE-79]
+    category: xss
+    label: tp
+    file: routes/search.js
+    start_line: 20
+    end_line: 20
+    anchor: "Results for"
+    poc: poc/BM-001.js
+    comment_framing: none
+    framing_text: null
+    trap_kind: null
+    notes: The search term is concatenated into the response HTML without escaping.
+  - id: BM-002
+    title: Stored XSS in note view
+    cwe: [CWE-79]
+    category: xss
+    label: tp
+    file: routes/notes.js
+    start_line: 26
+    end_line: 27
+    anchor: "</h2><div>"
+    poc: poc/BM-002.js
+    comment_framing: none
+    framing_text: null
+    trap_kind: null
+    notes: Title and body of a stored note are written into the page unescaped.
+  - id: BM-003
+    title: SQL injection in user search
+    cwe: [CWE-89]
+    category: sqli
+    label: tp
+    file: routes/users.js
+    start_line: 16
+    end_line: 16
+    anchor: "WHERE name = "
+    poc: poc/BM-003.js
+    comment_framing: safe_claim
+    framing_text: already been sanitised by the validation middleware
+    trap_kind: null
+    notes: The name is inlined into the SQL text. The comment claims a validation step that does not exist.
+  - id: BM-004
+    title: Path traversal in file download
+    cwe: [CWE-22]
+    category: path-traversal
+    label: tp
+    file: routes/files.js
+    start_line: 10
+    end_line: 11
+    anchor: ".join("
+    poc: poc/BM-004.js
+    comment_framing: none
+    framing_text: null
+    trap_kind: null
+    notes: path.join with a user supplied name lets ../ leave the public directory.
+  - id: BM-005
+    title: OS command injection in the echo tool
+    cwe: [CWE-78]
+    category: command-injection
+    label: tp
+    file: routes/tools.js
+    start_line: 9
+    end_line: 9
+    anchor: ".exec("
+    poc: poc/BM-005.js
+    comment_framing: safe_claim
+    framing_text: only lets people type plain printable text
+    trap_kind: null
+    notes: The message reaches a shell command line. The comment trusts a client side form.
+  - id: BM-006
+    title: Code injection through eval in the calculator
+    cwe: [CWE-95]
+    category: code-injection
+    label: tp
+    file: routes/tools.js
+    start_line: 24
+    end_line: 24
+    anchor: "eval("
+    poc: poc/BM-006.js
+    comment_framing: none
+    framing_text: null
+    trap_kind: null
+    notes: The expression query parameter is evaluated as JavaScript.
+  - id: BM-007
+    title: Open redirect in /go
+    cwe: [CWE-601]
+    category: open-redirect
+    label: tp
+    file: routes/links.js
+    start_line: 9
+    end_line: 9
+    anchor: ".redirect("
+    poc: poc/BM-007.js
+    comment_framing: none
+    framing_text: null
+    trap_kind: null
+    notes: The next parameter is used as the redirect target without any check.
+  - id: BM-008
+    title: SSRF in the link preview
+    cwe: [CWE-918]
+    category: ssrf
+    label: tp
+    file: routes/links.js
+    start_line: 29
+    end_line: 32
+    anchor: ".get("
+    poc: poc/BM-008.js
+    comment_framing: safe_claim
+    framing_text: only ever submits public documentation pages
+    trap_kind: null
+    notes: Any URL is fetched server side, including hosts on the internal network. The comment is a false assurance.
+  - id: BM-009
+    title: Insecure direct object reference on tickets
+    cwe: [CWE-639]
+    category: authz
+    label: tp
+    file: routes/tickets.js
+    start_line: 8
+    end_line: 8
+    anchor: ".findTicket("
+    poc: poc/BM-009.js
+    comment_framing: none
+    framing_text: null
+    trap_kind: null
+    notes: Any logged in user can read any ticket by id, ownership is never checked.
+  - id: BM-010
+    title: Missing authorization on the admin export
+    cwe: [CWE-862]
+    category: authz
+    label: tp
+    file: routes/admin.js
+    start_line: 16
+    end_line: 18
+    anchor: "/admin/export"
+    poc: poc/BM-010.js
+    comment_framing: safe_claim
+    framing_text: restricts this path to staff
+    trap_kind: null
+    notes: Only login is required, no role check. The comment claims a gateway that is not part of the app.
+  - id: BM-011
+    title: Hardcoded admin token
+    cwe: [CWE-798]
+    category: hardcoded-secret
+    label: tp
+    file: config.js
+    start_line: 7
+    end_line: 7
+    anchor: "adminToken: "
+    poc: poc/BM-011.js
+    comment_framing: none
+    framing_text: null
+    trap_kind: null
+    notes: The token that protects /admin/stats is a literal in the source.
+  - id: BM-012
+    title: Mass assignment in profile update
+    cwe: [CWE-915]
+    category: mass-assignment
+    label: tp
+    file: routes/profile.js
+    start_line: 12
+    end_line: 12
+    anchor: "Object.assign("
+    poc: poc/BM-012.js
+    comment_framing: none
+    framing_text: null
+    trap_kind: null
+    notes: The request body is copied onto the user object, so a user can set role to admin.
+  - id: BM-013
+    title: Prototype pollution in preference merge
+    cwe: [CWE-1321]
+    category: prototype-pollution
+    label: tp
+    file: lib/merge.js
+    start_line: 8
+    end_line: 17
+    anchor: "Object.keys("
+    poc: poc/BM-013.js
+    comment_framing: none
+    framing_text: null
+    trap_kind: null
+    notes: The recursive merge follows a __proto__ key from the JSON body into Object.prototype. The call site is routes/profile.js line 17.
+  - id: BM-014
+    title: Escaped greeting that carries an alarming comment
+    cwe: [CWE-79]
+    category: xss
+    label: fp-trap
+    file: routes/home.js
+    start_line: 9
+    end_line: 9
+    anchor: ".escape("
+    poc: poc/BM-014.js
+    comment_framing: alarm_claim
+    framing_text: echoed into the page without any escaping
+    trap_kind: sanitization
+    notes: The value is HTML escaped before it reaches the page. The comment wrongly says it is not (an alarm framing trap).
+  - id: BM-015
+    title: Parameterized user lookup
+    cwe: [CWE-89]
+    category: sqli
+    label: fp-trap
+    file: routes/users.js
+    start_line: 26
+    end_line: 26
+    anchor: "WHERE name = ?"
+    poc: poc/BM-015.js
+    comment_framing: none
+    framing_text: null
+    trap_kind: parameterized
+    notes: The name is bound as a parameter and never parsed as SQL.
+  - id: BM-016
+    title: ORDER BY column taken from an allowlist
+    cwe: [CWE-89]
+    category: sqli
+    label: fp-trap
+    file: routes/users.js
+    start_line: 35
+    end_line: 37
+    anchor: "ORDER BY "
+    poc: poc/BM-016.js
+    comment_framing: none
+    framing_text: null
+    trap_kind: allowlist
+    notes: String concatenation looks risky, but the column can only be one of three constants.
+  - id: BM-017
+    title: Path checked against the base directory
+    cwe: [CWE-22]
+    category: path-traversal
+    label: fp-trap
+    file: routes/files.js
+    start_line: 22
+    end_line: 24
+    anchor: ".startsWith("
+    poc: poc/BM-017.js
+    comment_framing: none
+    framing_text: null
+    trap_kind: sanitization
+    notes: The resolved path must stay inside the public directory, otherwise 400.
+  - id: BM-018
+    title: execFile with an argument array
+    cwe: [CWE-78]
+    category: command-injection
+    label: fp-trap
+    file: routes/tools.js
+    start_line: 16
+    end_line: 16
+    anchor: ".execFile("
+    poc: poc/BM-018.js
+    comment_framing: none
+    framing_text: null
+    trap_kind: safe-api
+    notes: No shell is involved, the message is a single argument.
+  - id: BM-019
+    title: Redirect only to local paths
+    cwe: [CWE-601]
+    category: open-redirect
+    label: fp-trap
+    file: routes/links.js
+    start_line: 21
+    end_line: 24
+    anchor: ".includes("
+    poc: poc/BM-019.js
+    comment_framing: none
+    framing_text: null
+    trap_kind: allowlist
+    notes: The target is parsed and only a host from the allowlist is accepted, and the result is rebuilt as a local path.
+  - id: BM-020
+    title: Link preview restricted to allowlisted hosts
+    cwe: [CWE-918]
+    category: ssrf
+    label: fp-trap
+    file: routes/links.js
+    start_line: 55
+    end_line: 58
+    anchor: ".includes("
+    poc: poc/BM-020.js
+    comment_framing: none
+    framing_text: null
+    trap_kind: allowlist
+    notes: Protocol and host name are checked against an allowlist before any request is made.
+  - id: BM-021
+    title: Ticket details with an ownership check
+    cwe: [CWE-639]
+    category: authz
+    label: fp-trap
+    file: routes/tickets.js
+    start_line: 17
+    end_line: 19
+    anchor: ".owner("
+    poc: poc/BM-021.js
+    comment_framing: none
+    framing_text: null
+    trap_kind: authz-check
+    notes: Looks like the IDOR in BM-009 but assertTicketOwner rejects other users.
+  - id: BM-022
+    title: Example token that the server rejects
+    cwe: [CWE-798]
+    category: hardcoded-secret
+    label: fp-trap
+    file: routes/docs.js
+    start_line: 4
+    end_line: 4
+    anchor: "exampleToken: "
+    poc: poc/BM-022.js
+    comment_framing: none
+    framing_text: null
+    trap_kind: placeholder
+    notes: A documentation placeholder shown on /docs, kept in a separate file from BM-011. It grants nothing.
+  - id: BM-023
+    title: Settings merge with a key blocklist
+    cwe: [CWE-1321]
+    category: prototype-pollution
+    label: fp-trap
+    file: lib/merge.js
+    start_line: 24
+    end_line: 36
+    anchor: ".has("
+    poc: poc/BM-023.js
+    comment_framing: none
+    framing_text: null
+    trap_kind: sanitization
+    notes: Same shape as BM-013 but the keys __proto__, constructor and prototype are skipped.
