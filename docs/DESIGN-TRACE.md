@@ -41,3 +41,8 @@ Aturan: kolom Dasar tidak boleh kosong (diperiksa `scripts/gates/phase-0.sh`).
 | D-28 | Model immutable (`frozen`), `model_construct` dimatikan, `model_copy(update)` divalidasi ulang, `transition()` memvalidasi ulang masukan (I-01, I-02, A-22) | teknik | teknik | 1 |
 | D-29 | Kunci OS `<log>.lock` (flock atau msvcrt) plus rekonsiliasi head saat append; `verify` menolak log hilang, kosong tanpa head, atau berbaris kosong (I-06, A-21, A-22) | teknik | teknik | 1 |
 | D-30 | `transition()` menolak `actor` di luar `Actor` saat runtime; registri `rule_id` dan redaksi `reason` ditunda (A-22) | teknik | teknik | 1 |
+| D-31 | Id Finding deterministik: hash (tool, rule, file, kunci isi, kemunculan); `fingerprints` placeholder Semgrep diabaikan (R-02, A-23) | teknik | teknik | 2 |
+| D-32 | Keluarga CWE diturunkan dari hierarki MITRE view 1000 (Class/Pillar terdekat) lewat skrip, plus kelompok manual 862/863 (I-05, R-07, A-24) | teknik | teknik | 2 |
+| D-33 | Dedup menandai, tidak membuang: `duplicate_of` ke kanonik, jendela baris 2, aturan sama harus bertumpuk, tanpa rantai (I-01, A-25) | teknik | teknik | 2 |
+| D-34 | Parser SARIF toleran: result objek tidak pernah dibuang, bukan-objek dicatat di `skipped`, isi SARIF diperlakukan sebagai data (I-04, A-26) | teknik | teknik | 2 |
+| D-35 | Semgrep lewat Docker dengan image dipin digest, mount hanya baca, tes memakai fixture nyata (R-05, A-27) | teknik | teknik | 2 |

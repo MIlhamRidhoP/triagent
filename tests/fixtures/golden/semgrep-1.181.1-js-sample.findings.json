@@ -1,0 +1,117 @@
+{
+  "tool_versions": [
+    "semgrep 1.181.1"
+  ],
+  "findings": [
+    {
+      "id": "f-4cc6e21072212715766ac6f3",
+      "source_tool": "semgrep",
+      "rule_id": "javascript.express.security.injection.raw-html-format.raw-html-format",
+      "cwe": [
+        "CWE-79"
+      ],
+      "cwe_family": "CWE-74",
+      "owasp_category": "OWASP-A03:2021 - Injection",
+      "location": {
+        "file": "app.js",
+        "start_line": 9,
+        "end_line": 9
+      },
+      "message": "User data flows into the host portion of this manually-constructed HTML. This can introduce a Cross-Site-Scripting (XSS) vulnerability if this comes from user-provided input. Consider using a sanitization library such as DOMPurify to sanitize the HTML within.",
+      "severity_scanner": "warning",
+      "lifecycle": "deduped",
+      "duplicate_of": "f-47d67fbc96a20c2ad0406fbc",
+      "triage": [],
+      "verification": {
+        "result": "not_attempted",
+        "evidence_path": null,
+        "sandbox_run_id": null
+      },
+      "fix": null,
+      "human_decision": null
+    },
+    {
+      "id": "f-47d67fbc96a20c2ad0406fbc",
+      "source_tool": "semgrep",
+      "rule_id": "javascript.express.security.audit.xss.direct-response-write.direct-response-write",
+      "cwe": [
+        "CWE-79"
+      ],
+      "cwe_family": "CWE-74",
+      "owasp_category": "OWASP-A03:2021 - Injection",
+      "location": {
+        "file": "app.js",
+        "start_line": 9,
+        "end_line": 9
+      },
+      "message": "Detected directly writing to a Response object from user-defined input. This bypasses any HTML escaping and may expose your application to a Cross-Site-scripting (XSS) vulnerability. Instead, use 'resp.render()' to render safely escaped HTML.",
+      "severity_scanner": "warning",
+      "lifecycle": "deduped",
+      "duplicate_of": null,
+      "triage": [],
+      "verification": {
+        "result": "not_attempted",
+        "evidence_path": null,
+        "sandbox_run_id": null
+      },
+      "fix": null,
+      "human_decision": null
+    },
+    {
+      "id": "f-99152259245b803c66637984",
+      "source_tool": "semgrep",
+      "rule_id": "javascript.lang.security.audit.code-string-concat.code-string-concat",
+      "cwe": [
+        "CWE-95"
+      ],
+      "cwe_family": "CWE-74",
+      "owasp_category": "OWASP-A03:2021 - Injection",
+      "location": {
+        "file": "app.js",
+        "start_line": 19,
+        "end_line": 19
+      },
+      "message": "Found data from an Express or Next web request flowing to `eval`. If this data is user-controllable this can lead to execution of arbitrary system commands in the context of your application process. Avoid `eval` whenever possible.",
+      "severity_scanner": "error",
+      "lifecycle": "deduped",
+      "duplicate_of": null,
+      "triage": [],
+      "verification": {
+        "result": "not_attempted",
+        "evidence_path": null,
+        "sandbox_run_id": null
+      },
+      "fix": null,
+      "human_decision": null
+    },
+    {
+      "id": "f-c0c29cf77fba22d9742913e5",
+      "source_tool": "semgrep",
+      "rule_id": "javascript.express.security.audit.express-open-redirect.express-open-redirect",
+      "cwe": [
+        "CWE-601"
+      ],
+      "cwe_family": "CWE-610",
+      "owasp_category": "OWASP-A01:2021 - Broken Access Control",
+      "location": {
+        "file": "app.js",
+        "start_line": 29,
+        "end_line": 29
+      },
+      "message": "The application redirects to a URL specified by user-supplied input `req` that is not validated. This could redirect users to malicious locations. Consider using an allow-list approach to validate URLs, or warn users they are being redirected to a third-party website.",
+      "severity_scanner": "warning",
+      "lifecycle": "deduped",
+      "duplicate_of": null,
+      "triage": [],
+      "verification": {
+        "result": "not_attempted",
+        "evidence_path": null,
+        "sandbox_run_id": null
+      },
+      "fix": null,
+      "human_decision": null
+    }
+  ],
+  "warnings": [],
+  "skipped": []
+}

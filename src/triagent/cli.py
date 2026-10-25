@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import Annotated
 
@@ -10,6 +11,9 @@ import typer
 from triagent import __version__
 from triagent.audit import AuditLog
 from triagent.config import ConfigError, load_config
+from triagent.ingest.sarif import ParseResult, SarifError, parse_sarif
+from triagent.ingest.semgrep import SemgrepError, run_semgrep
+from triagent.normalize import DEFAULT_LINE_WINDOW, normalize_findings
 from triagent.schema_export import check_all, export_all
 
 app = typer.Typer(
@@ -84,3 +88,67 @@ def export_schema(
         return
     for p in export_all(out):
         typer.echo(f"wrote {p}")
+
+
+@app.command("ingest")
+def ingest(
+    sarif: Annotated[Path | None, typer.Argument(help="SARIF 2.1.x file to ingest.")] = None,
+    run_semgrep_on: Annotated[
+        Path | None,
+        typer.Option("--run-semgrep", help="Scan this directory with the pinned Semgrep image."),
+    ] = None,
+    out: Annotated[
+        Path | None, typer.Option(help="Write findings JSON here (default: stdout).")
+    ] = None,
+    audit_log: Annotated[Path, typer.Option(help="Audit log for status changes.")] = Path(
+        ".triagent/audit.jsonl"
+    ),
+    strip_prefix: Annotated[
+        list[str] | None, typer.Option(help="Path prefix to remove from file URIs. Repeatable.")
+    ] = None,
+    line_window: Annotated[
+        int, typer.Option(min=0, help="Line distance for duplicate detection.")
+    ] = DEFAULT_LINE_WINDOW,
+    no_dedup: Annotated[
+        bool, typer.Option("--no-dedup", help="Keep findings raw; skip normalization.")
+    ] = False,
+) -> None:
+    """Parse scanner output into findings, fill CWE families and mark duplicates (none dropped)."""
+    if (sarif is None) == (run_semgrep_on is None):
+        typer.echo("error: give exactly one of SARIF or --run-semgrep", err=True)
+        raise typer.Exit(2)
+    try:
+        if sarif is not None:
+            parsed: ParseResult = parse_sarif(sarif, strip_prefixes=tuple(strip_prefix or ()))
+        else:
+            assert run_semgrep_on is not None
+            parsed = run_semgrep(run_semgrep_on)
+    except (SarifError, SemgrepError, ValueError) as exc:
+        typer.echo(f"error: {exc}", err=True)
+        raise typer.Exit(1) from exc
+
+    findings = parsed.findings
+    if not no_dedup:
+        findings = normalize_findings(findings, log=AuditLog(audit_log), line_window=line_window)
+    doc = {
+        "tool_versions": parsed.tool_versions,
+        "findings": [f.model_dump(mode="json") for f in findings],
+        "warnings": parsed.warnings,
+        "skipped": parsed.skipped,
+    }
+    text = json.dumps(doc, indent=2, ensure_ascii=True) + "\n"
+    if out is None:
+        typer.echo(text, nl=False)
+    else:
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(text, encoding="utf-8", newline="\n")
+    dups = sum(1 for f in findings if f.duplicate_of)
+    typer.echo(
+        f"ingested {len(findings)} findings ({dups} duplicates kept), "
+        f"{len(parsed.warnings)} warnings, {len(parsed.skipped)} skipped",
+        err=True,
+    )
+    for w in parsed.warnings:
+        typer.echo(f"warning: {w}", err=True)
+    if parsed.skipped:
+        raise typer.Exit(2)
