@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Membuang baris atribusi otomatis dari pesan commit (pengaman cadangan untuk pengaturan attribution).
+f="$1"
+tmp="$(mktemp)"
+grep -viE '^co-authored-by:[[:space:]]*claude|^claude-session:|generated with \[?claude' "$f" > "$tmp" || true
+cat "$tmp" > "$f"
+rm -f "$tmp"
+exit 0

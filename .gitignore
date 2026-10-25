@@ -1,0 +1,37 @@
+# Rahasia
+.env
+.env.*
+!.env.example
+
+# Literatur: PDF tidak pernah masuk git, hanya catatan buatan sendiri
+*.pdf
+docs/literature/pdf/*
+!docs/literature/pdf/README.md
+
+# Keadaan lokal
+.triagent/
+.claude/settings.local.json
+*.log
+sandbox-out/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+dist/
+build/
+
+# Node (aplikasi benchmark)
+node_modules/
+coverage/
+
+# OS dan editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

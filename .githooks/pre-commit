@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# Menolak commit yang memuat PDF, berkas .env, atau pola rahasia umum.
+set -u
+
+fail=0
+staged="$(git diff --cached --name-only --diff-filter=ACM)"
+
+if printf '%s\n' "$staged" | grep -iE '\.pdf$' >/dev/null; then
+  echo "pre-commit: PDF tidak boleh masuk git:"
+  printf '%s\n' "$staged" | grep -iE '\.pdf$' | sed 's/^/  /'
+  fail=1
+fi
+
+envs="$(printf '%s\n' "$staged" | grep -E '(^|/)\.env(\..*)?$' | grep -v '\.env\.example$' || true)"
+if [ -n "$envs" ]; then
+  echo "pre-commit: berkas .env tidak boleh masuk git:"
+  printf '%s\n' "$envs" | sed 's/^/  /'
+  fail=1
+fi
+
+# Pola disusun dari potongan agar berkas ini tidak mengenai dirinya sendiri.
+p_ant='sk-a''nt-[A-Za-z0-9_-]{20,}'
+p_goog='AI''za[0-9A-Za-z_-]{35}'
+p_gh='gh[pousr]''_[A-Za-z0-9]{36,}'
+p_aws='AK''IA[0-9A-Z]{16}'
+p_key='-----BEGIN [A-Z ]*PRIVATE'' KEY-----'
+if git diff --cached -U0 | grep -E '^\+' | grep -E "$p_ant|$p_goog|$p_gh|$p_aws|$p_key" >/dev/null; then
+  echo "pre-commit: ada pola yang mirip kunci atau rahasia di perubahan yang akan di-commit."
+  fail=1
+fi
+
+exit "$fail"

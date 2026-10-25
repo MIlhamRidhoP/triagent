@@ -1,0 +1,21 @@
+name: ci
+
+on:
+  push:
+    branches: [main, "phase/**"]
+  pull_request:
+
+jobs:
+  hygiene:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Guard self-test
+        run: bash scripts/guard-selftest.sh
+      - name: Hygiene (working tree)
+        run: bash scripts/check-hygiene.sh
+      - name: Hygiene (commit messages in PR)
+        if: github.event_name == 'pull_request'
+        run: bash scripts/check-hygiene.sh --commits "origin/${{ github.base_ref }}..HEAD"
