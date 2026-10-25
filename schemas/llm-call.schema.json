@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One LLM call, successful or not (I-06, R-03).",
+  "properties": {
+    "call_id": {
+      "minLength": 1,
+      "title": "Call Id",
+      "type": "string"
+    },
+    "called_at": {
+      "format": "date-time",
+      "title": "Called At",
+      "type": "string"
+    },
+    "cost_usd": {
+      "minimum": 0.0,
+      "title": "Cost Usd",
+      "type": "number"
+    },
+    "error": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Error"
+    },
+    "latency_ms": {
+      "minimum": 0.0,
+      "title": "Latency Ms",
+      "type": "number"
+    },
+    "model_id": {
+      "minLength": 1,
+      "title": "Model Id",
+      "type": "string"
+    },
+    "params": {
+      "additionalProperties": true,
+      "title": "Params",
+      "type": "object"
+    },
+    "prompt_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Prompt Hash",
+      "type": "string"
+    },
+    "prompt_id": {
+      "minLength": 1,
+      "title": "Prompt Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ok",
+        "error",
+        "timeout",
+        "schema_invalid"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "tokens_in": {
+      "minimum": 0,
+      "title": "Tokens In",
+      "type": "integer"
+    },
+    "tokens_out": {
+      "minimum": 0,
+      "title": "Tokens Out",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "call_id",
+    "model_id",
+    "called_at",
+    "params",
+    "prompt_id",
+    "prompt_hash",
+    "tokens_in",
+    "tokens_out",
+    "cost_usd",
+    "latency_ms",
+    "status"
+  ],
+  "title": "LlmCall",
+  "type": "object"
+}

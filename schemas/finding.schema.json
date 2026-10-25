@@ -1,0 +1,381 @@
+{
+  "$defs": {
+    "DecisionKind": {
+      "enum": [
+        "accepted",
+        "rejected",
+        "suppressed"
+      ],
+      "title": "DecisionKind",
+      "type": "string"
+    },
+    "Fix": {
+      "additionalProperties": false,
+      "properties": {
+        "new_findings": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Findings"
+        },
+        "patch_path": {
+          "minLength": 1,
+          "title": "Patch Path",
+          "type": "string"
+        },
+        "rescan_clean": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rescan Clean"
+        },
+        "tests_passed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tests Passed"
+        }
+      },
+      "required": [
+        "patch_path"
+      ],
+      "title": "Fix",
+      "type": "object"
+    },
+    "HumanDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "actor": {
+          "default": "human",
+          "enum": [
+            "human",
+            "rule"
+          ],
+          "title": "Actor",
+          "type": "string"
+        },
+        "decided_at": {
+          "format": "date-time",
+          "title": "Decided At",
+          "type": "string"
+        },
+        "decision": {
+          "$ref": "#/$defs/DecisionKind"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "rule_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rule Id"
+        }
+      },
+      "required": [
+        "decision",
+        "reason",
+        "decided_at"
+      ],
+      "title": "HumanDecision",
+      "type": "object"
+    },
+    "Lifecycle": {
+      "enum": [
+        "raw",
+        "deduped",
+        "triaged",
+        "fix_proposed",
+        "fix_validated",
+        "suppressed"
+      ],
+      "title": "Lifecycle",
+      "type": "string"
+    },
+    "Location": {
+      "additionalProperties": false,
+      "properties": {
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "file": {
+          "minLength": 1,
+          "title": "File",
+          "type": "string"
+        },
+        "start_line": {
+          "minimum": 1,
+          "title": "Start Line",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "file",
+        "start_line",
+        "end_line"
+      ],
+      "title": "Location",
+      "type": "object"
+    },
+    "TriageVerdict": {
+      "additionalProperties": false,
+      "description": "Annotation from one model. Telemetry lives in the LlmCall referenced by ``call_id``.",
+      "properties": {
+        "call_id": {
+          "minLength": 1,
+          "title": "Call Id",
+          "type": "string"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "model_id": {
+          "minLength": 1,
+          "title": "Model Id",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "verdict": {
+          "$ref": "#/$defs/Verdict"
+        }
+      },
+      "required": [
+        "model_id",
+        "verdict",
+        "reason",
+        "confidence",
+        "call_id"
+      ],
+      "title": "TriageVerdict",
+      "type": "object"
+    },
+    "Verdict": {
+      "enum": [
+        "likely_tp",
+        "likely_fp",
+        "uncertain"
+      ],
+      "title": "Verdict",
+      "type": "string"
+    },
+    "Verification": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_path": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidence Path"
+        },
+        "result": {
+          "$ref": "#/$defs/VerificationResult",
+          "default": "not_attempted"
+        },
+        "sandbox_run_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sandbox Run Id"
+        }
+      },
+      "title": "Verification",
+      "type": "object"
+    },
+    "VerificationResult": {
+      "enum": [
+        "exploitable",
+        "not_reproduced",
+        "not_attempted"
+      ],
+      "title": "VerificationResult",
+      "type": "string"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "cwe": {
+      "items": {
+        "pattern": "^CWE-[1-9][0-9]*$",
+        "type": "string"
+      },
+      "title": "Cwe",
+      "type": "array"
+    },
+    "cwe_family": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cwe Family"
+    },
+    "duplicate_of": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Duplicate Of"
+    },
+    "fix": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Fix"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "human_decision": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HumanDecision"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "id": {
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "lifecycle": {
+      "$ref": "#/$defs/Lifecycle",
+      "default": "raw"
+    },
+    "location": {
+      "$ref": "#/$defs/Location"
+    },
+    "message": {
+      "title": "Message",
+      "type": "string"
+    },
+    "owasp_category": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Owasp Category"
+    },
+    "rule_id": {
+      "minLength": 1,
+      "title": "Rule Id",
+      "type": "string"
+    },
+    "severity_scanner": {
+      "anyOf": [
+        {
+          "enum": [
+            "none",
+            "note",
+            "warning",
+            "error"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Severity Scanner"
+    },
+    "source_tool": {
+      "minLength": 1,
+      "title": "Source Tool",
+      "type": "string"
+    },
+    "triage": {
+      "items": {
+        "$ref": "#/$defs/TriageVerdict"
+      },
+      "title": "Triage",
+      "type": "array"
+    },
+    "verification": {
+      "$ref": "#/$defs/Verification"
+    }
+  },
+  "required": [
+    "id",
+    "source_tool",
+    "rule_id",
+    "location",
+    "message"
+  ],
+  "title": "Finding",
+  "type": "object"
+}

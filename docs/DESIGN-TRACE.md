@@ -36,3 +36,8 @@ Aturan: kolom Dasar tidak boleh kosong (diperiksa `scripts/gates/phase-0.sh`).
 | D-23 | Python `>=3.12` diuji di 3.12 dan 3.13; Semgrep lewat image Docker dengan versi dipin, tes memakai fixture SARIF (A-02, A-03, R-05) | teknik | teknik | 0, 2 |
 | D-24 | `cwe` berupa daftar; keluarga CWE dari hierarki MITRE (view 1000) plus pasangan manual di `config/cwe-families.yaml` (R-07). Kecocokan CWE yang longgar juga dipakai di tamberg-bahsi-2025, tetapi tabelnya keputusan teknik | teknik | teknik | 2 |
 | D-25 | Hash audit log atas JSON kanonis (kunci terurut, UTF-8, tanpa spasi); hash kepala disimpan di metadata run untuk mendeteksi pemotongan ekor (R-09) | teknik | teknik | 1 |
+| D-26 | Tabel transisi lifecycle; suppress hanya oleh manusia atau aturan beride, dan tiap transisi menulis satu entri audit (I-01, A-14) | teknik | teknik | 1 |
+| D-27 | `redact: false` wajib punya `redact_experiment`; mode verify wajib `verify.enabled` (I-03, A-20) | teknik | teknik | 1 |
+| D-28 | Model immutable (`frozen`), `model_construct` dimatikan, `model_copy(update)` divalidasi ulang, `transition()` memvalidasi ulang masukan (I-01, I-02, A-22) | teknik | teknik | 1 |
+| D-29 | Kunci OS `<log>.lock` (flock atau msvcrt) plus rekonsiliasi head saat append; `verify` menolak log hilang, kosong tanpa head, atau berbaris kosong (I-06, A-21, A-22) | teknik | teknik | 1 |
+| D-30 | `transition()` menolak `actor` di luar `Actor` saat runtime; registri `rule_id` dan redaksi `reason` ditunda (A-22) | teknik | teknik | 1 |

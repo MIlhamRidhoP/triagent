@@ -1,0 +1,111 @@
+{
+  "$defs": {
+    "Budget": {
+      "additionalProperties": false,
+      "properties": {
+        "max_usd_per_invocation": {
+          "default": 5.0,
+          "exclusiveMinimum": 0,
+          "title": "Max Usd Per Invocation",
+          "type": "number"
+        }
+      },
+      "title": "Budget",
+      "type": "object"
+    },
+    "VerifyConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "default": false,
+          "title": "Enabled",
+          "type": "boolean"
+        },
+        "sandbox": {
+          "const": "docker",
+          "default": "docker",
+          "title": "Sandbox",
+          "type": "string"
+        }
+      },
+      "title": "VerifyConfig",
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "budget": {
+      "$ref": "#/$defs/Budget"
+    },
+    "languages": {
+      "items": {
+        "enum": [
+          "javascript",
+          "typescript"
+        ],
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Languages",
+      "type": "array"
+    },
+    "mode": {
+      "default": "triage",
+      "enum": [
+        "triage",
+        "triage+verify",
+        "triage+verify+fix"
+      ],
+      "title": "Mode",
+      "type": "string"
+    },
+    "models": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Models",
+      "type": "array"
+    },
+    "redact": {
+      "default": true,
+      "title": "Redact",
+      "type": "boolean"
+    },
+    "redact_experiment": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Redact Experiment"
+    },
+    "scanners": {
+      "items": {
+        "enum": [
+          "semgrep",
+          "sonarcloud",
+          "codeql"
+        ],
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Scanners",
+      "type": "array"
+    },
+    "verify": {
+      "$ref": "#/$defs/VerifyConfig"
+    }
+  },
+  "required": [
+    "models"
+  ],
+  "title": "Config",
+  "type": "object"
+}

@@ -19,3 +19,25 @@ jobs:
       - name: Hygiene (commit messages in PR)
         if: github.event_name == 'pull_request'
         run: bash scripts/check-hygiene.sh --commits "origin/${{ github.base_ref }}..HEAD"
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install
+        run: python -m pip install -e ".[dev]"
+      - name: Ruff lint
+        run: python -m ruff check src tests
+      - name: Ruff format
+        run: python -m ruff format --check src tests
+      - name: Schemas match models
+        run: python -m triagent export-schema --check --out schemas
+      - name: Pytest
+        run: python -m pytest -q
