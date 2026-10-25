@@ -17,8 +17,8 @@ Tiga bagian: keputusan terkunci (K), asumsi yang boleh diubah (A), dan pertanyaa
 ## Asumsi (boleh diubah)
 
 - **A-01.** Repo berdiri sendiri, bukan bagian dari repo tugas akhir.
-- **A-02.** Inti ditulis dengan Python 3.12; bahasa target analisis v1 adalah JavaScript dan TypeScript, benchmark berupa aplikasi Node.js (Express).
-- **A-03.** Scanner pertama adalah Semgrep OSS karena lokal, berformat SARIF, dan tanpa akun. SonarCloud dan CodeQL menyusul.
+- **A-02.** Inti ditulis dengan Python, `requires-python >=3.12`, diuji di 3.12 dan 3.13 (mesin pemilik 3.13); bahasa target analisis v1 adalah JavaScript dan TypeScript, benchmark berupa aplikasi Node.js (Express).
+- **A-03.** Scanner pertama adalah Semgrep OSS karena lokal, berformat SARIF, dan tanpa akun. SonarCloud dan CodeQL menyusul. Di Windows, Semgrep dijalankan lewat image Docker resmi dengan versi dipin. Tes hanya memakai fixture SARIF.
 - **A-04.** README dalam bahasa Inggris (repo publik); dokumen proses dalam bahasa Indonesia.
 - **A-05.** `GUARD_LIMIT` bawaan 45 (persen meter mingguan, nilai absolut, bukan pemakaian harian). Ubah di `.claude/guard/config.env` sesuai kebutuhan dan setelah meter mingguan reset.
 - **A-06.** Batas biaya bawaan per perintah eval berbayar adalah 5 USD, anggaran total diisi pemilik di prompt peluncuran.
@@ -29,6 +29,11 @@ Tiga bagian: keputusan terkunci (K), asumsi yang boleh diubah (A), dan pertanyaa
 - **A-11.** Hook `PreToolUse` diasumsikan juga berlaku untuk pemanggilan alat di dalam subagent. Belum diverifikasi; tes di Fase 0 dengan `GUARD_LIMIT` sengaja diset rendah.
 - **A-12.** Lisensi belum dipilih. Tanpa lisensi, repo publik berarti semua hak dilindungi. Pemilik memutuskan sebelum rilis.
 - **A-13.** Atribusi: `attribution.commit` dan `attribution.pr` dikosongkan. Trailer URL sesi dikelola kunci lain di beberapa versi, jadi hook `commit-msg` menjadi pengaman cadangan. Periksa `git log -1 --format=full` setelah commit pertama.
+- **A-14.** Status lifecycle dan hasil verifikasi adalah dua field terpisah; `verified` diturunkan dari `verification.result == exploitable` (R-01).
+- **A-15.** Id Finding deterministik; duplikat disimpan dengan `duplicate_of`, tidak dibuang (R-02).
+- **A-16.** Setiap panggilan LLM dicatat sebagai entitas `LlmCall` di audit log, termasuk yang gagal (R-03).
+- **A-17.** Evaluasi v1 mengukur triase atas temuan scanner; deteksi tanpa scanner adalah roadmap (R-06).
+- **A-18.** Tafsiran I-10: larangan panggilan berbayar berlaku untuk tes dan pengembangan repo ini; pemakaian produk dibatasi `budget` (sementara, menunggu O-05, R-04).
 
 ## Pertanyaan terbuka
 
@@ -36,3 +41,7 @@ Tiga bagian: keputusan terkunci (K), asumsi yang boleh diubah (A), dan pertanyaa
 - **O-02.** Sumber literatur yang belum dibaca (lihat `docs/literature/INDEX.md`, bagian belum dipilah) dipakai atau tidak.
 - **O-03.** Venue dan detail sitasi yang masih bertanda [CEK] di catatan literatur.
 - **O-04.** Nilai akhir `GUARD_LIMIT` dan anggaran API untuk fase 4 sampai 6.
+- **O-05.** Teks final I-10 untuk pemakaian produk (butuh persetujuan pemilik; usulan R-04 opsi A di `reports/phase-0/resolution.md`). SPEC.md tidak diubah.
+- **O-06.** Dukungan Semgrep native di Windows: belum diketahui.
+- **O-07.** Venue dan DOI paper huynh-uwa: belum diketahui (PDF tidak memuat venue maupun DOI).
+- **O-08.** Pendanaan dan konflik kepentingan belum diperiksa untuk gnieciak-2025, huynh-uwa, rajapaksha-2024, dan belum terlihat di teks sifting-noise-2026, contextual-bias-2026, chasing-shadows-2026, koterba-2026 (hanya pernyataan tanpa konflik).

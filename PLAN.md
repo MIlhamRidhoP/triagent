@@ -8,7 +8,7 @@ Aturan umum: satu fase hanya selesai bila `scripts/gate.sh N` lulus dan review t
 
 | Fase | Judul | Developer | Titik cek | Perkiraan kuota* | Status |
 |---|---|---|---|---|---|
-| 0 | Fondasi, guard, literatur, validasi SPEC | Sonnet | - | 3 sampai 5% | [ ] |
+| 0 | Fondasi, guard, literatur, validasi SPEC | Sonnet | - | 3 sampai 5% | [x] |
 | 1 | Kerangka, skema, CLI, audit log | Sonnet | - | 4 sampai 8% | [ ] |
 | 2 | Ingest SARIF, adapter Semgrep, dedup | Sonnet | - | 4 sampai 8% | [ ] |
 | 3 | Benchmark dan harness evaluasi | **Opus** | **C1** | 8 sampai 14% | [ ] |
@@ -112,11 +112,12 @@ Diisi orkestrator dari `scripts/usage.sh` di awal dan akhir tiap fase.
 
 | Fase | Tanggal | Meter sebelum (%) | Meter sesudah (%) | Selisih | Catatan |
 |---|---|---|---|---|---|
+| 0 | 2026-10-26 | belum tersedia | belum tersedia | belum diketahui | Guard baru dipasang di fase ini; status line aktif setelah sesi dimulai ulang, jadi `scripts/usage.sh` belum punya data. Reviewer Sonnet (instruksi pemilik), architect Opus. Siklus perbaikan 1 tanpa architect (temuan kecil). A-07, A-08, A-09, A-11 belum diuji. |
 | | | | | | |
 
 ## Status berjalan
 
-Terakhir diperbarui: belum dimulai.
-Fase aktif: -
-Langkah terakhir yang lulus: -
+Terakhir diperbarui: 2026-10-26, fase 0 lulus.
+Fase aktif: 1 (belum dimulai)
+Langkah terakhir yang lulus: fase 0 (gate + review siklus 1)
 Hal yang sedang dikerjakan saat berhenti: -
